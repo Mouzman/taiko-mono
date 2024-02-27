@@ -1,0 +1,67 @@
+import pygame
+import random
+
+# Initialize Pygame
+pygame.init()
+
+# Set up screen
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Taiko Game")
+
+# Colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+
+# Taiko drum
+taiko_drum = pygame.image.load("taiko_drum.png")
+taiko_drum = pygame.transform.scale(taiko_drum, (150, 150))
+
+# Taiko drum position
+taiko_x = SCREEN_WIDTH // 2 - taiko_drum.get_width() // 2
+taiko_y = SCREEN_HEIGHT - taiko_drum.get_height() - 50
+
+# Score
+score = 0
+
+# Clock
+clock = pygame.time.Clock()
+
+# Main game loop
+running = True
+while running:
+    screen.fill(WHITE)
+
+    # Event handling
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            if taiko_x <= mouse_x <= taiko_x + taiko_drum.get_width() and taiko_y <= mouse_y <= taiko_y + taiko_drum.get_height():
+                score += 1
+
+    # Randomly spawn taiko drums
+    if random.randint(1, 100) == 1:
+        taiko_x = random.randint(0, SCREEN_WIDTH - taiko_drum.get_width())
+
+    # Move the taiko drum down the screen
+    taiko_y += 5
+
+    # Draw the taiko drum
+    screen.blit(taiko_drum, (taiko_x, taiko_y))
+
+    # Display score
+    font = pygame.font.Font(None, 36)
+    score_text = font.render(f"Score: {score}", True, BLACK)
+    screen.blit(score_text, (10, 10))
+
+    # Update the display
+    pygame.display.flip()
+
+    # Cap the frame rate
+    clock.tick(60)
+
+# Quit Pygame
+pygame.quit()
